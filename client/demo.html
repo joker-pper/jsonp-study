@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <title>ajax使用jsonp方式跨域</title>
+	<p>显示十条时间记录</p>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+</head>
+
+<body>
+
+
+<script>
+    /*使用jsonp方式完成跨域资源的访问*/
+
+   var x = setInterval("getData()", 1000);
+   var i = 0;
+   
+   //回调函数在获取数据成功后执行
+   function showTime(data) {
+	 var p = document.createElement("p");
+     p.innerHTML = "<span style='color:red'>" + ++i + ":<\/span> " + data.time;
+     document.body.appendChild(p);
+   }
+   
+   function getData(){
+       $.ajax({
+           url: "http://localhost:8080//testJsonp/getTime",
+           type: "get",
+           dataType: 'jsonp',
+           jsonp: 'callback',  //jsonp请求中指定回调函数的参数名称为callback，即action?callback=xx
+           jsonpCallback: 'showTime',   //指定jsonp请求对应的回调函数名称为showTime即callback=showTime
+           success:function(data) {
+		   /*
+               var p = document.createElement("p");
+               p.innerHTML = "<span style='color:red'>" + ++i + ":<\/span> " + data.time;
+               document.body.appendChild(p);*/
+           },
+           complete: function (XMLHttpRequest, textStatus) {
+               //console.info("textStatus : " + textStatus);
+
+               var len = i;
+               if(len == 10) {
+                   clearInterval(x);
+                   return;
+               }
+				/*
+               for(var tval in this) {
+			     console.log(tval + " : "+ this[tval] + "\n"); // this是指调用本次AJAX请求时传递的options参数
+			   }
+			   */
+           }
+
+       });
+
+
+   }
+
+
+</script>
+
+
+</body>
+</html>
